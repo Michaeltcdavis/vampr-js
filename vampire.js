@@ -43,8 +43,41 @@ class Vampire {
   // For example:
   // * when comparing Ansel and Sarah, Ansel is the closest common anscestor.
   // * when comparing Ansel and Andrew, Ansel is the closest common anscestor.
-  closestCommonAncestor(vampire) {
+  searchOffspring(previousVamp, vampire) {
+    if (!this.offspring.length) {
+      return false;
+    }
+    if (this.offspring.includes(vampire)) {
+      return this;
+    }
+    for (let descendant of this.offspring) {
+      if (descendant !== previousVamp) {
+      if (descendant === vampire) {
+        return this;
+      }
+        if (descendant.searchOffspring(previousVamp, vampire)) {
+          return this;
+        }
+      }
+    }
+    return false;
+  }
 
+  closestCommonAncestor(vampire) {
+    let previousVamp = 0;
+    let currentVamp = this;
+    while (currentVamp.creator) {
+      if (currentVamp === vampire) {
+        return currentVamp;
+      }
+      if (currentVamp.searchOffspring(previousVamp, vampire)) {
+        return currentVamp;
+      }
+      previousVamp = currentVamp;
+      currentVamp = currentVamp.creator;
+    }
+    //returns root if loop reaches the end
+    return currentVamp;
   }
 }
 
